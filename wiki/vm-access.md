@@ -515,7 +515,7 @@ Complete these steps:
 
 1. [Connect to the VM as the user `<user>` (LOCAL)](#connect-to-the-vm-as-the-user-user-local) if not yet connected.
 
-2. To open the [`SSH`](./ssh.md#what-is-ssh) config,
+2. To open the [`sshd`](./ssh.md#sshd) config,
 
    [run in the `VS Code Terminal`](./vs-code.md#run-a-command-in-the-vs-code-terminal):
 
@@ -542,7 +542,7 @@ Complete these steps:
 
 ### Restart `sshd` (REMOTE)
 
-1. To validate the config,
+1. To validate the [`sshd`](./ssh.md#sshd) config,
 
    [run in the `VS Code Terminal`](./vs-code.md#run-a-command-in-the-vs-code-terminal):
 
@@ -557,7 +557,7 @@ Complete these steps:
 
    If it prints errors, fix them in `/etc/ssh/sshd_config` before continuing.
 
-3. To restart the service,
+3. To restart `sshd`,
 
    [run in the `VS Code Terminal`](./vs-code.md#run-a-command-in-the-vs-code-terminal):
 
