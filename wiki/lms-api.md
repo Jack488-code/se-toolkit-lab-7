@@ -2,6 +2,12 @@
 
 ## About the LMS API
 
+## LMS API key
+
+The [API key](./web-api.md#api-key) that is used to authorize requests to the [LMS API](#about-the-lms-api).
+
+You can use almost any (alphanumeric) string as the LMS API key.
+
 ## LMS API host port
 
 The [port number](./computer-networks.md#port-number) (without `<` and `>`) which the [LMS API](#about-the-lms-api) is available at on the [host](./computer-networks.md#host).
