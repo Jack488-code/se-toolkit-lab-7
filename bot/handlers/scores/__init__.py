@@ -18,7 +18,7 @@ def handle_scores(user_input: str = "") -> str:
         return (
             "📊 Scores command usage:\n\n"
             "/scores <lab_id> - Get scores for a specific lab\n\n"
-            "Example: /scores lab-04"
+            "Example: /scores lab-01"
         )
 
     config = load_config()
@@ -32,14 +32,12 @@ def handle_scores(user_input: str = "") -> str:
 
     # Format scores
     lines = [f"📊 Scores for {user_input}:\n"]
-    lines.append(f"Total items: {result['total_items']}\n")
-
-    for item in result["items"]:
-        item_name = item.get("name", "Unknown")
-        item_id = item.get("id", "N/A")
-        lines.append(f"• {item_name} (ID: {item_id})")
-
-    if result["total_items"] > 5:
-        lines.append(f"\n... and {result['total_items'] - 5} more items")
+    lines.append(f"**{result.get('title', 'Unknown')}**\n")
+    
+    description = result.get("description", "")
+    if description:
+        lines.append(f"{description}\n")
+    
+    lines.append(f"Lab ID: {result.get('lab_id', 'N/A')}")
 
     return "\n".join(lines)
