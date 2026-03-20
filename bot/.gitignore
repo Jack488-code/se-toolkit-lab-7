@@ -1,0 +1,12 @@
+# Bot runtime files
+bot.log
+# uv
+.venv/
+uv.lock
+
+# Python
+__pycache__/
+*.pyc
+
+# Environment
+.env.bot.secret
