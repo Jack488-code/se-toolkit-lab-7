@@ -1,3 +1,5 @@
 """Services for external APIs."""
 
-# Will be implemented in Task 2 and Task 3
+from .api_client import LMSAPIClient, create_lms_client
+
+__all__ = ["LMSAPIClient", "create_lms_client"]

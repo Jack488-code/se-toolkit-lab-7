@@ -8,6 +8,17 @@ uv.lock
 # Python
 __pycache__/
 *.pyc
+<<<<<<< HEAD
+=======
+*.pyo
+*.pyd
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+>>>>>>> 28b52bd (Add bot/.gitignore for runtime files)
 
 # Environment
 .env.bot.secret
