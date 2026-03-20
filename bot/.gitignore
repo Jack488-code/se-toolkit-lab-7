@@ -1,5 +1,6 @@
 # Bot runtime files
 bot.log
+
 # uv
 .venv/
 uv.lock
