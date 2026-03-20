@@ -65,13 +65,15 @@ class LMSAPIClient:
                     # Extract unique labs from items
                     labs = {}
                     for item in data:
-                        lab_id = item.get("lab_id")
-                        if lab_id and lab_id not in labs:
-                            labs[lab_id] = {
-                                "id": lab_id,
-                                "name": item.get("name", f"Lab {lab_id}"),
-                                "description": item.get("description", ""),
-                            }
+                        # Lab items have type="lab" and title contains lab name
+                        if item.get("type") == "lab":
+                            lab_id = f"lab-{item.get('id')}"
+                            if lab_id not in labs:
+                                labs[lab_id] = {
+                                    "id": lab_id,
+                                    "name": item.get("title", f"Lab {item.get('id')}"),
+                                    "description": item.get("description", ""),
+                                }
                     return list(labs.values())
                 else:
                     return []
@@ -82,7 +84,7 @@ class LMSAPIClient:
         """Get scores for a specific lab.
 
         Args:
-            lab_id: The lab identifier (e.g., "lab-04").
+            lab_id: The lab identifier (e.g., "lab-04" or "4").
 
         Returns:
             Dict with scores info or None if not found.
@@ -93,15 +95,20 @@ class LMSAPIClient:
                 response = await client.get(url, headers=self._get_headers())
                 if response.status_code == 200:
                     data = response.json()
-                    # Filter items by lab_id
+                    # Extract lab ID number (e.g., "lab-04" -> 4, or "4" -> 4)
+                    lab_num = lab_id.replace("lab-", "").lstrip("0")
+                    
+                    # Filter items by lab (type="lab" and matching id)
                     lab_items = [
-                        item for item in data if item.get("lab_id") == lab_id
+                        item for item in data 
+                        if item.get("type") == "lab" and str(item.get("id")) == lab_num
                     ]
                     if lab_items:
+                        lab = lab_items[0]
                         return {
-                            "lab_id": lab_id,
-                            "total_items": len(lab_items),
-                            "items": lab_items[:5],  # Limit to 5 items
+                            "lab_id": f"lab-{lab.get('id')}",
+                            "title": lab.get("title", "Unknown"),
+                            "description": lab.get("description", ""),
                         }
                     else:
                         return None
