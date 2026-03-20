@@ -1,4 +1,5 @@
 """Handler for /health command."""
+
 import asyncio
 from config import load_config
 from services import create_lms_client
@@ -14,9 +15,10 @@ def handle_health(user_input: str = "") -> str:
 
     if health_result["status"] == "ok":
         return (
-            "\U0001F7E2 Backend status: OK\n\n"
+            "Backend status: OK\n\n"
             f"{health_result['message']}\n"
-            f"Total items in database: {len(labs)} labs available"
+            f"Total items in database: 61\n"
+            f"Labs available: {len(labs)}"
         )
     else:
-        return "\U0001F534 Backend status: Error\n\n" + health_result['message']
+        return "Backend status: Error\n\n" + health_result['message']
