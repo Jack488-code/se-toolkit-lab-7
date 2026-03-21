@@ -1,0 +1,18 @@
+services:
+  bot:
+    image: python:3.12-slim
+    working_dir: /app
+    volumes:
+      - ./bot:/app
+      - ./bot/.env.bot.secret:/app/.env.bot.secret
+    command: |
+      sh -c "pip install python-telegram-bot httpx pydantic pydantic-settings python-dotenv && python bot.py"
+    network_mode: "host"
+    environment:
+      - BOT_TOKEN=8306553739:AAHqnhWt94wIF_Gx3sLACsWRiomMmmXYwUk
+      - LMS_API_URL=http://localhost:42002
+      - LMS_API_KEY=my-secret-api-key
+      - LLM_API_KEY=538c6ca154dc90ba8239edc70c1d14d283b55c469e682ff197aa72e740fb8ccf
+      - LLM_API_BASE_URL=http://localhost:42005/v1
+      - LLM_API_MODEL=coder-model
+    restart: unless-stopped
