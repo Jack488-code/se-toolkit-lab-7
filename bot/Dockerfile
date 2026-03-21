@@ -5,9 +5,9 @@ WORKDIR /app
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
-# Copy project files
+# Copy project files (context is ./bot, so files are at root)
 COPY pyproject.toml uv.lock ./
-COPY bot/ ./bot/
+COPY bot.py ./
 COPY config.py ./
 COPY handlers/ ./handlers/
 COPY services/ ./services/
