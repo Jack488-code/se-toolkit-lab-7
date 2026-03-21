@@ -48,7 +48,17 @@ def process_command(command: str) -> str:
         return handler(arg)
 
     # Fallback: pattern matching for plain text queries (Task 3)
+    # Order matters: check more specific patterns first
     cmd_lower = command.lower()
+    
+    # Scores must be checked before labs (because "lab" appears in scores queries)
+    if any(p in cmd_lower for p in ["score", "scores", "grade", "progress", "completion"]):
+        import re
+        match = re.search(r"lab-?\d+", cmd_lower)
+        if match:
+            lab_id = match.group().replace(" ", "")
+            return handle_scores(lab_id)
+        return handle_scores(arg)
     
     if any(p in cmd_lower for p in ["hello", "hi", "welcome", "start"]):
         return handle_start(arg)
@@ -58,13 +68,6 @@ def process_command(command: str) -> str:
         return handle_health(arg)
     if any(p in cmd_lower for p in ["lab", "labs", "available"]):
         return handle_labs(arg)
-    if any(p in cmd_lower for p in ["score", "scores", "grade", "progress"]):
-        import re
-        match = re.search(r"lab-?\d+", cmd_lower)
-        if match:
-            lab_id = match.group().replace(" ", "")
-            return handle_scores(lab_id)
-        return handle_scores(arg)
 
     return f"❓ Unknown command: {cmd}\nUse /help to see available commands."
 
