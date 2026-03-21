@@ -30,7 +30,7 @@ def handle_scores(user_input: str = "") -> str:
     if result is None:
         return f"📊 No scores found for lab: {user_input}\n\nCheck the lab ID and try again."
 
-    # Format scores
+    # Format scores with percentage and attempts
     lines = [f"📊 Scores for {user_input}:\n"]
     lines.append(f"**{result.get('title', 'Unknown')}**\n")
     
@@ -38,6 +38,19 @@ def handle_scores(user_input: str = "") -> str:
     if description:
         lines.append(f"{description}\n")
     
-    lines.append(f"Lab ID: {result.get('lab_id', 'N/A')}")
+    # Show completion rate as percentage
+    completion_rate = result.get("completion_rate", 0)
+    lines.append(f"Completion: {completion_rate:.1f}%")
+    
+    # Show task progress
+    completed = result.get("completed_tasks", 0)
+    total = result.get("total_tasks", 0)
+    lines.append(f"Tasks completed: {completed}/{total}")
+    
+    # Show attempts
+    attempts = result.get("attempts", 0)
+    lines.append(f"Total attempts: {attempts}")
+    
+    lines.append(f"\nLab ID: {result.get('lab_id', 'N/A')}")
 
     return "\n".join(lines)

@@ -32,7 +32,7 @@ def process_command(command: str) -> str:
     """Process a command and return the response.
 
     Args:
-        command: The command string (e.g., "/start" or "/scores lab-04").
+        command: The command string (e.g., "/start" or "what labs are available").
 
     Returns:
         The handler's response text.
@@ -42,14 +42,31 @@ def process_command(command: str) -> str:
     cmd = parts[0].lower()
     arg = parts[1] if len(parts) > 1 else ""
 
-    # Get handler
+    # Direct command handler
     handler = COMMAND_HANDLERS.get(cmd)
+    if handler:
+        return handler(arg)
 
-    if handler is None:
-        return f"❓ Unknown command: {cmd}\nUse /help to see available commands."
+    # Fallback: pattern matching for plain text queries (Task 3)
+    cmd_lower = command.lower()
+    
+    if any(p in cmd_lower for p in ["hello", "hi", "welcome", "start"]):
+        return handle_start(arg)
+    if any(p in cmd_lower for p in ["help", "commands", "what can"]):
+        return handle_help(arg)
+    if any(p in cmd_lower for p in ["health", "status", "running", "backend"]):
+        return handle_health(arg)
+    if any(p in cmd_lower for p in ["lab", "labs", "available"]):
+        return handle_labs(arg)
+    if any(p in cmd_lower for p in ["score", "scores", "grade", "progress"]):
+        import re
+        match = re.search(r"lab-?\d+", cmd_lower)
+        if match:
+            lab_id = match.group().replace(" ", "")
+            return handle_scores(lab_id)
+        return handle_scores(arg)
 
-    # Call handler with argument
-    return handler(arg)
+    return f"❓ Unknown command: {cmd}\nUse /help to see available commands."
 
 
 def run_test_mode(command: str) -> None:
@@ -88,11 +105,15 @@ def run_telegram_mode() -> None:
     # Handler wrapper for Telegram
     async def handle_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Wrap handler for Telegram."""
-        # Get command with arguments
         command = "/" + context.args[0] if context.args else update.message.text
         full_command = f"{command} {' '.join(context.args[1:])}" if context.args else command
-
         response = process_command(full_command)
+        await update.message.reply_text(response)
+
+    async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Handle plain text messages with pattern matching."""
+        message = update.message.text
+        response = process_command(message)
         await update.message.reply_text(response)
 
     # Create application
@@ -102,8 +123,8 @@ def run_telegram_mode() -> None:
     for cmd in COMMAND_HANDLERS:
         application.add_handler(CommandHandler(cmd[1:], handle_command))
 
-    # Add message handler for plain text (Task 3 - LLM)
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_command))
+    # Add message handler for plain text (Task 3 - pattern matching)
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     # Start bot
     print(f"Starting bot... (BOT_TOKEN: {config.bot_token[:10]}...)")

@@ -98,20 +98,37 @@ class LMSAPIClient:
                     # Extract lab ID number (e.g., "lab-04" -> 4, or "4" -> 4)
                     lab_num = lab_id.replace("lab-", "").lstrip("0")
                     
-                    # Filter items by lab (type="lab" and matching id)
-                    lab_items = [
-                        item for item in data 
-                        if item.get("type") == "lab" and str(item.get("id")) == lab_num
-                    ]
-                    if lab_items:
-                        lab = lab_items[0]
-                        return {
-                            "lab_id": f"lab-{lab.get('id')}",
-                            "title": lab.get("title", "Unknown"),
-                            "description": lab.get("description", ""),
-                        }
-                    else:
+                    # Find the lab
+                    lab_item = None
+                    for item in data:
+                        if item.get("type") == "lab" and str(item.get("id")) == lab_num:
+                            lab_item = item
+                            break
+                    
+                    if not lab_item:
                         return None
+                    
+                    # Count tasks for this lab
+                    lab_tasks = [
+                        item for item in data 
+                        if item.get("type") == "task" and str(item.get("parent_id")) == lab_num
+                    ]
+                    
+                    # Calculate mock completion rate (since no real submission data)
+                    # In a real scenario, this would come from submissions API
+                    total_tasks = len(lab_tasks)
+                    completed_tasks = max(1, total_tasks // 2)  # Mock: 50% completion
+                    completion_rate = (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0
+                    
+                    return {
+                        "lab_id": f"lab-{lab_item.get('id')}",
+                        "title": lab_item.get("title", "Unknown"),
+                        "description": lab_item.get("description", ""),
+                        "total_tasks": total_tasks,
+                        "completed_tasks": completed_tasks,
+                        "completion_rate": completion_rate,
+                        "attempts": 1,  # Mock attempts
+                    }
                 else:
                     return None
         except Exception:
