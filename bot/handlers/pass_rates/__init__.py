@@ -16,7 +16,7 @@ def handle_pass_rates(user_input: str = "") -> str:
         return "📊 No pass rate data available."
     
     lines = ["📊 Lab Pass Rates:\n"]
-    for lab in pass_rates[:10]:  # Limit to 10 labs
+    for lab in pass_rates:
         lab_name = lab.get("lab_name", f"Lab {lab.get('lab_id', '?')}")
         rate = lab.get("pass_rate", 0)
         lines.append(f"• {lab_name}: {rate:.1f}%")
