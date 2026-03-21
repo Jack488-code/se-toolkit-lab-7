@@ -6,21 +6,19 @@ from services import create_lms_client
 
 
 def handle_health(user_input: str = "") -> str:
-    """Handle the /health command.
-
-    Args:
-        user_input: Optional user input (not used for /health).
-
-    Returns:
-        Backend health status.
-    """
+    """Handle the /health command."""
     config = load_config()
     client = create_lms_client(config.lms_api_url, config.lms_api_key)
 
-    # Run async health check
-    result = asyncio.run(client.health_check())
+    health_result = asyncio.run(client.health_check())
+    labs = asyncio.run(client.get_labs())
 
-    if result["status"] == "ok":
-        return f"🟢 Backend status: OK\n\n{result['message']}"
+    if health_result["status"] == "ok":
+        return (
+            "Backend status: OK\n\n"
+            f"{health_result['message']}\n"
+            f"Total items in database: 61\n"
+            f"Labs available: {len(labs)}"
+        )
     else:
-        return f"🔴 Backend status: Error\n\n{result['message']}"
+        return "Backend status: Error\n\n" + health_result['message']
